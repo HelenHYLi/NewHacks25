@@ -3,40 +3,32 @@ import Message from "./comp/message.js";
 import MessageInput from "./comp/messageInput.js";
 import "./App.css";
 
-//added logo
 import plane from "./plane.png"
 
 function App() {
+  //default message 
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hello! Where would you like to go?" }
   ]);
 
+  //handle the sending and recieving of messages 
   const handleSend = async (text) => {
     if (!text.trim()) return;
 
+    //takes user input 
     const newMessage = { sender: "user", text };
     setMessages([...messages, newMessage]);
 
-    //UPDATED ALL OF THE FOLLOWING ----------------------------------------------
-
-    try { 
-      const response = await fetch ("connection to python", { //NEED TO UPDATE THIS TO THE RIGHT LINK FOR THE CONNECTION
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({message: text}),
-      });
-      const data = await response.json(); 
-      setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
-    } catch (error) {
-      console.error(error);
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: "An error occured, please try again" },
-      ]);
-    }
+    //sends user input to the backend and retrieves response to display 
+    const response = await fetch ("connection to python", //replace "connection to python" with the connection link to the backend
+      { 
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({message: text}),
+    });
   };
 
-  //added the following for the automatic scrolling 
+  //automatic scrolling down
   const messagesEndRef = useRef(null); 
   const scrollDown = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -45,7 +37,6 @@ function App() {
     scrollDown();
   }, [messages]);
 
-  //updated the interface 
   return ( 
     <div className="App-header">
       <div className="chat-container">
